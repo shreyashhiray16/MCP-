@@ -1,0 +1,27 @@
+{
+  "name": "pune-transit-mcp",
+  "version": "1.0.0",
+  "description": "Pune Transit and Commute MCP Server",
+  "main": "src/server.py",
+  "scripts": {
+    "start": "python -m src.http_server",
+    "dev": "python -m src.http_server",
+    "demo": "python demo.py",
+    "server": "python -m src.server",
+    "http": "python -m src.http_server",
+    "test": "python -m pytest",
+    "ingest": "python scripts/ingest_gtfs.py",
+    "inspect": "npx @modelcontextprotocol/inspector python -m src.server"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "pune",
+    "transit",
+    "claude",
+    "pmpml",
+    "metro"
+  ],
+  "author": "Shreyash",
+  "license": "MIT"
+}

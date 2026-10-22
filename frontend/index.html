@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pune Transit & Commute AI - Live Door-to-Door Mobility</title>
+  <meta name="description"
+    content="Real-time multi-modal Pune commute assistant powered by Model Context Protocol (MCP), PMPML GTFS bus network, and Pune Maha-Metro.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <!-- Leaflet CSS for Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- App Stylesheet -->
+  <link rel="stylesheet" href="/style.css?v=3">
+
+  <script>
+    // Global Google Maps authentication & missing key error handler
+    // Guarantees that "API key needed" / MissingKeyMapError is NEVER shown as an error popup on the home screen
+    window.gm_authFailure = function () {
+      console.warn("[Map Engine] Google Maps API key unauthorized or unactivated. Falling back to live Leaflet engine seamlessly with zero error popups.");
+      if (window.handleGoogleAuthFailure) {
+        window.handleGoogleAuthFailure();
+      }
+    };
+  </script>
+</head>
+
+<body class="light-theme">
+  <div class="app-container">
+
+    <!-- Top Navigation Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-route"></i>
+        </div>
+        <div class="brand-text">
+          <h1>Pune Transit <span class="badge-mcp">MCP LIVE</span></h1>
+          <p class="brand-subtitle">PMPML Bus + Maha-Metro Door-to-Door Intelligence</p>
+        </div>
+      </div>
+
+      <!-- Quick Navigation Tabs -->
+      <nav class="header-nav">
+        <button id="tab-plan-btn" class="nav-btn active" data-tab="planner">
+          <i class="fa-solid fa-diamond-turn-right"></i> Plan Trip
+        </button>
+        <button id="tab-departures-btn" class="nav-btn" data-tab="departures">
+          <i class="fa-solid fa-clock"></i> Next Departures
+        </button>
+        <button id="tab-metro-btn" class="nav-btn" data-tab="metro">
+          <i class="fa-solid fa-train-subway"></i> Pune Metro
+        </button>
+        <button id="tab-saved-btn" class="nav-btn" data-tab="saved">
+          <i class="fa-solid fa-bookmark"></i> Saved Places
+        </button>
+      </nav>
+
+      <div class="header-actions">
+        <button id="map-engine-btn" class="map-status-pill has-google" title="Google Maps Engine & Configuration">
+          <i class="fa-brands fa-google"></i>
+          <span id="map-status-text">Google Maps: Live</span>
+        </button>
+        <div class="header-status">
+          <span class="pulse-indicator"></span>
+          <span class="status-text">Server Active (IST)</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace Grid -->
+    <main class="main-content">
+
+      <!-- Floating restore button for collapsed panel -->
+      <button type="button" id="restore-panel-btn" class="floating-panel-restore hidden"
+        title="Restore Pune Mobility Panel">
+        <i class="fa-solid fa-bars-staggered"></i> <span>Show Mobility Hub</span>
+      </button>
+
+      <!-- Left Control & Results Panel -->
+      <section class="control-panel" id="control-panel">
+
+        <!-- Collapsible / Full Background Map Preview Toggle Bar -->
+        <div class="panel-header-bar">
+          <div class="panel-title-chip">
+            <i class="fa-solid fa-compass"></i> Pune Mobility Hub
+          </div>
+          <div class="panel-toggles-group">
+            <button type="button" id="toggle-panel-btn" class="btn-panel-toggle" title="Toggle compact side view">
+              <i class="fa-solid fa-arrows-left-right-to-line"></i> <span id="toggle-panel-label">Wide Map</span>
+            </button>
+            <button type="button" id="collapse-panel-btn" class="btn-panel-toggle btn-panel-collapse"
+              title="Collapse panel to view 100% full background map">
+              <i class="fa-solid fa-expand"></i> <span id="collapse-panel-label">Full Map</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ================= TAB 1: TRIP PLANNER ================= -->
+        <div id="tab-planner" class="tab-pane active">
+
+          <div class="card search-card">
+            <div class="card-header">
+              <h2><i class="fa-solid fa-location-arrow"></i> Where are you heading?</h2>
+              <span class="subtext">Multi-modal bus, metro & walking routing</span>
+            </div>
+
+            <!-- Quick Preset Chips -->
+            <div class="preset-chips">
+              <span class="chip" data-orig="Pimpri" data-dest="Hinjewadi Phase 1">Pimpri ➔ Hinjewadi Ph 1</span>
+              <span class="chip" data-orig="Shivajinagar" data-dest="Hinjewadi Phase 3">Shivajinagar ➔ Hinjewadi</span>
+              <span class="chip" data-orig="PCMC" data-dest="Swargate">PCMC ➔ Swargate (Metro)</span>
+              <span class="chip" data-orig="Vanaz" data-dest="Ramwadi">Vanaz ➔ Ramwadi (Aqua)</span>
+            </div>
+
+            <form id="trip-form" class="trip-form">
+              <!-- Origin Input -->
+              <div class="input-group">
+                <label for="origin-input"><i class="fa-solid fa-circle-dot origin-dot"></i> Origin</label>
+                <div class="input-wrapper">
+                  <input type="text" id="origin-input" placeholder="e.g. Pimpri, home, Swargate" autocomplete="off"
+                    required>
+                  <button type="button" class="btn-input-action" id="use-my-location-btn" title="Use current location">
+                    <i class="fa-solid fa-crosshairs"></i>
+                  </button>
+                </div>
+                <div id="origin-suggestions" class="suggestions-list hidden"></div>
+              </div>
+
+              <!-- Swap Button -->
+              <div class="swap-row">
+                <button type="button" id="swap-locations-btn" class="btn-swap" title="Swap Origin and Destination">
+                  <i class="fa-solid fa-arrow-down-up-across-line"></i>
+                </button>
+              </div>
+
+              <!-- Destination Input -->
+              <div class="input-group">
+                <label for="destination-input"><i class="fa-solid fa-location-dot dest-dot"></i> Destination</label>
+                <div class="input-wrapper">
+                  <input type="text" id="destination-input" placeholder="e.g. Hinjewadi Phase 1, office, Deccan"
+                    autocomplete="off" required>
+                </div>
+                <div id="dest-suggestions" class="suggestions-list hidden"></div>
+              </div>
+
+              <!-- Options Row: Departure Time & Max Walk -->
+              <div class="options-grid">
+                <div class="input-group">
+                  <label for="depart-time"><i class="fa-regular fa-clock"></i> Leave At (IST)</label>
+                  <input type="time" id="depart-time" class="time-picker">
+                </div>
+                <div class="input-group">
+                  <label for="mode-select"><i class="fa-solid fa-sliders"></i> Mode Preference</label>
+                  <select id="mode-select">
+                    <option value="all">All Modes (Bus + Metro)</option>
+                    <option value="bus">Bus Only</option>
+                    <option value="metro">Metro Only</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <button type="submit" id="plan-btn" class="btn btn-primary">
+                <i class="fa-solid fa-magnifying-glass"></i> Find Best Routes
+              </button>
+            </form>
+          </div>
+
+          <!-- Loading Spinner -->
+          <div id="planner-loading" class="loading-state hidden">
+            <div class="spinner"></div>
+            <p>Computing optimal Pune bus & metro routes...</p>
+          </div>
+
+          <!-- Results Container -->
+          <div id="itineraries-container" class="itineraries-container">
+            <!-- Dynamically populated itineraries -->
+          </div>
+
+        </div>
+
+        <!-- ================= TAB 2: LIVE DEPARTURES ================= -->
+        <div id="tab-departures" class="tab-pane hidden">
+          <div class="card departures-card">
+            <div class="card-header">
+              <h2><i class="fa-solid fa-bus-simple"></i> Upcoming Stop Departures</h2>
+              <span class="subtext">Real-time scheduled departures at any stop</span>
+            </div>
+
+            <div class="input-group">
+              <label for="stop-select">Select Bus Stop or Metro Station</label>
+              <select id="stop-select" class="form-select">
+                <option value="">-- Choose Stop or Station --</option>
+                <optgroup label="Popular Bus Terminals">
+                  <option value="STOP_PIMPRI_STN">Pimpri Railway Station Bus Stop</option>
+                  <option value="STOP_SHIVAJINAGAR">Shivajinagar Bus Stand</option>
+                  <option value="STOP_SWARGATE">Swargate Bus Depot</option>
+                  <option value="STOP_DECCAN">Deccan Gymkhana Bus Station</option>
+                  <option value="STOP_HINJ_CHOWK">Hinjewadi Shivaji Chowk</option>
+                  <option value="STOP_KATRAJ">Katraj Bus Depot</option>
+                  <option value="STOP_PUNE_STATION">Pune Railway Station Bus Stand</option>
+                  <option value="STOP_HADAPSAR_GADITAL">Hadapsar Gadital Bus Stand</option>
+                </optgroup>
+                <optgroup label="Pune Metro Stations">
+                  <option value="swargate">Swargate Metro Station</option>
+                  <option value="civil_court">Civil Court Interchange</option>
+                  <option value="pcmc">PCMC Metro Station</option>
+                  <option value="vanaz">Vanaz Metro Station</option>
+                  <option value="deccan_gymkhana">Deccan Gymkhana Metro</option>
+                  <option value="ramwadi">Ramwadi Metro Station</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <div id="departures-loading" class="loading-state hidden">
+              <div class="spinner"></div>
+              <p>Fetching upcoming departures...</p>
+            </div>
+
+            <div id="departures-list" class="departures-list">
+              <!-- Dynamically populated departures -->
+              <div class="empty-state">
+                <i class="fa-solid fa-bus"></i>
+                <p>Select a stop above to view next bus and train departures in real time.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= TAB 3: PUNE METRO ================= -->
+        <div id="tab-metro" class="tab-pane hidden">
+          <div class="card metro-card">
+            <div class="card-header">
+              <h2><i class="fa-solid fa-train-subway"></i> Pune Metro Network</h2>
+              <span class="subtext">Maha-Metro Purple & Aqua Lines (06:00 - 22:00 IST)</span>
+            </div>
+
+            <!-- Lines Summary -->
+            <div class="metro-lines-overview">
+              <div class="metro-line-pill purple">
+                <span class="pill-dot"></span>
+                <span class="pill-title">Purple Line (Line 1)</span>
+                <span class="pill-desc">PCMC ➔ Swargate (14 stations)</span>
+              </div>
+              <div class="metro-line-pill aqua">
+                <span class="pill-dot"></span>
+                <span class="pill-title">Aqua Line (Line 2)</span>
+                <span class="pill-desc">Vanaz ➔ Ramwadi (16 stations)</span>
+              </div>
+              <div class="interchange-badge">
+                <i class="fa-solid fa-shuffle"></i> Interchange: <strong>Civil Court</strong>
+              </div>
+            </div>
+
+            <!-- Metro Fare Calculator -->
+            <div class="fare-calculator">
+              <h3><i class="fa-solid fa-calculator"></i> Quick Fare Calculator</h3>
+              <div class="fare-grid">
+                <div class="input-group">
+                  <label for="metro-from">From Station</label>
+                  <select id="metro-from" class="form-select"></select>
+                </div>
+                <div class="input-group">
+                  <label for="metro-to">To Station</label>
+                  <select id="metro-to" class="form-select"></select>
+                </div>
+              </div>
+              <button type="button" id="calc-fare-btn" class="btn btn-secondary">
+                <i class="fa-solid fa-ticket"></i> Check Fare & Route
+              </button>
+              <div id="fare-result" class="fare-result hidden"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= TAB 4: SAVED PLACES ================= -->
+        <div id="tab-saved" class="tab-pane hidden">
+          <div class="card saved-card">
+            <div class="card-header">
+              <h2><i class="fa-solid fa-bookmark"></i> Favorite Places</h2>
+              <span class="subtext">Saved in local SQLite database for quick 1-tap commute planning</span>
+            </div>
+
+            <form id="save-place-form" class="save-place-form">
+              <div class="input-group">
+                <label for="place-label">Label (e.g. home, office, college)</label>
+                <input type="text" id="place-label" placeholder="e.g. office" required>
+              </div>
+              <div class="input-group">
+                <label for="place-address">Location or Landmark</label>
+                <input type="text" id="place-address" placeholder="e.g. Hinjewadi Phase 1, Wipro Circle" required>
+              </div>
+              <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-plus"></i> Save Place
+              </button>
+            </form>
+
+            <div id="saved-places-list" class="saved-places-list">
+              <!-- Dynamically populated saved places -->
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Right Interactive Map Section -->
+      <section class="map-section">
+        <div id="map" class="map-container"></div>
+
+        <!-- Floating Live Map Controls Toolbar -->
+        <div class="map-toolbar">
+          <div class="layer-buttons">
+            <button type="button" class="layer-btn active" data-layer="google_road" title="Real Google Maps Roadmap">
+              <i class="fa-brands fa-google"></i> Google Road
+            </button>
+            <button type="button" class="layer-btn" data-layer="google_satellite" title="Google Satellite Hybrid">
+              <i class="fa-solid fa-satellite"></i> Satellite
+            </button>
+            <button type="button" class="layer-btn" data-layer="google_terrain" title="Google Terrain Elevation">
+              <i class="fa-solid fa-mountain"></i> Terrain
+            </button>
+            <button type="button" class="layer-btn" data-layer="google_traffic" title="Google Live Traffic Overlay">
+              <i class="fa-solid fa-traffic-light"></i> Traffic
+            </button>
+            <button type="button" class="layer-btn" data-layer="dark" title="Dark Transit Basemap">
+              <i class="fa-solid fa-moon"></i> Dark
+            </button>
+            <button type="button" class="layer-btn" data-layer="osm" title="OpenStreetMap Transit">
+              <i class="fa-solid fa-earth-asia"></i> OSM
+            </button>
+          </div>
+          <button type="button" class="map-action-btn" id="recenter-pune-btn" title="Center map on Pune">
+            <i class="fa-solid fa-location-crosshairs"></i> Pune Center
+          </button>
+        </div>
+
+        <!-- Floating Map Legend -->
+        <div class="map-legend">
+          <div class="legend-header">
+            <span><i class="fa-solid fa-circle-nodes"></i> Transit Network</span>
+          </div>
+          <div class="legend-item"><span class="legend-color purple"></span> Metro Purple Line</div>
+          <div class="legend-item"><span class="legend-color aqua"></span> Metro Aqua Line</div>
+          <div class="legend-item"><span class="legend-color bus"></span> Bus Routes & Stops</div>
+          <div class="legend-item"><span class="legend-color walk"></span> Walking Leg</div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Modal: Google Maps API Key & Basemap Settings -->
+  <div id="map-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fa-brands fa-google"></i>
+          <h3>Google Maps Engine & Configuration</h3>
+        </div>
+        <button type="button" id="close-modal-btn" class="btn-modal-close" title="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="key-status-banner has-google" id="key-status-banner">
+          <i class="fa-solid fa-circle-check status-icon"></i>
+          <div class="status-content">
+            <strong id="modal-status-heading">Google Maps Engine: Live & Visible</strong>
+            <p id="modal-status-desc">Real Google Maps tiles (Roadmap, Satellite, Terrain & Traffic) are streaming
+              directly from Google's high-speed CDN. The full transit network and routes are rendered in real-time.</p>
+          </div>
+        </div>
+
+        <form id="google-key-form" class="key-config-form">
+          <label for="google-key-input">
+            <i class="fa-solid fa-key"></i> Custom Google Maps API Key (Optional)
+          </label>
+          <div class="key-input-wrapper">
+            <input type="password" id="google-key-input"
+              placeholder="AIzaSy... (optional for custom Google Cloud account)" autocomplete="off">
+            <button type="button" id="toggle-key-visibility" class="btn-key-visibility" title="Show/Hide Key">
+              <i class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+          <p class="key-safety-note">
+            <i class="fa-solid fa-circle-info"></i>
+            <span><strong>Internet CDN Active:</strong> Real Google Maps works out-of-the-box without requiring an API
+              key. If you have your own Google Cloud key, entering it will save it to <code>.env</code> and attach your
+              quota.</span>
+          </p>
+
+          <div class="modal-footer-btns">
+            <button type="submit" class="btn btn-primary">
+              <i class="fa-solid fa-check"></i> Save & Apply
+            </button>
+            <button type="button" id="clear-key-btn" class="btn btn-secondary">
+              <i class="fa-solid fa-rotate-left"></i> Reset to Direct CDN
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- App JS -->
+  <script src="/app.js?v=2"></script>
+</body>
+
+</html>

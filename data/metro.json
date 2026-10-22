@@ -1,0 +1,100 @@
+{
+  "last_verified": "2026-10-11",
+  "source_url": "https://www.punemetrorail.org",
+  "notes": "Verified against Maha-Metro Pune operational network (Purple Line PCMC-Swargate and Aqua Line Vanaz-Ramwadi, interchange at Civil Court)",
+  "lines": [
+    {
+      "id": "line_1_purple",
+      "name": "Purple Line",
+      "color": "Purple",
+      "first_train": "06:00",
+      "last_train": "22:00",
+      "frequency_mins_peak": 7,
+      "frequency_mins_offpeak": 12,
+      "stations": [
+        "pcmc",
+        "tukaram_nagar",
+        "bhosari",
+        "kasarwadi",
+        "phugewadi",
+        "dapodi",
+        "bopodi",
+        "khadki",
+        "range_hill",
+        "shivajinagar_metro",
+        "civil_court",
+        "budhwar_peth",
+        "mandai",
+        "swargate"
+      ]
+    },
+    {
+      "id": "line_2_aqua",
+      "name": "Aqua Line",
+      "color": "Aqua",
+      "first_train": "06:00",
+      "last_train": "22:00",
+      "frequency_mins_peak": 7,
+      "frequency_mins_offpeak": 12,
+      "stations": [
+        "vanaz",
+        "anand_nagar",
+        "ideal_colony",
+        "nal_stop",
+        "garware_college",
+        "deccan_gymkhana",
+        "chhatrapati_sambhaji_udyan",
+        "pmc",
+        "civil_court",
+        "mangalwar_peth",
+        "pune_railway_station",
+        "ruby_hall_clinic",
+        "bund_garden",
+        "kalyani_nagar",
+        "ramwadi"
+      ]
+    }
+  ],
+  "stations": [
+    {"id": "pcmc", "name": "PCMC", "lat": 18.6288, "lon": 73.8188, "lines": ["line_1_purple"]},
+    {"id": "tukaram_nagar", "name": "Sant Tukaram Nagar", "lat": 18.6212, "lon": 73.8214, "lines": ["line_1_purple"]},
+    {"id": "bhosari", "name": "Bhosari (Nashik Phata)", "lat": 18.6083, "lon": 73.8275, "lines": ["line_1_purple"]},
+    {"id": "kasarwadi", "name": "Kasarwadi", "lat": 18.5997, "lon": 73.8288, "lines": ["line_1_purple"]},
+    {"id": "phugewadi", "name": "Phugewadi", "lat": 18.5886, "lon": 73.8322, "lines": ["line_1_purple"]},
+    {"id": "dapodi", "name": "Dapodi", "lat": 18.5781, "lon": 73.8347, "lines": ["line_1_purple"]},
+    {"id": "bopodi", "name": "Bopodi", "lat": 18.5678, "lon": 73.8378, "lines": ["line_1_purple"]},
+    {"id": "khadki", "name": "Khadki", "lat": 18.5583, "lon": 73.8419, "lines": ["line_1_purple"]},
+    {"id": "range_hill", "name": "Range Hill", "lat": 18.5475, "lon": 73.8458, "lines": ["line_1_purple"]},
+    {"id": "shivajinagar_metro", "name": "Shivajinagar Metro Station", "lat": 18.5322, "lon": 73.8522, "lines": ["line_1_purple"]},
+    {"id": "civil_court", "name": "Civil Court Interchange", "lat": 18.5292, "lon": 73.8564, "lines": ["line_1_purple", "line_2_aqua"]},
+    {"id": "budhwar_peth", "name": "Budhwar Peth", "lat": 18.5178, "lon": 73.8561, "lines": ["line_1_purple"]},
+    {"id": "mandai", "name": "Mandai", "lat": 18.5122, "lon": 73.8558, "lines": ["line_1_purple"]},
+    {"id": "swargate", "name": "Swargate Metro Station", "lat": 18.5019, "lon": 73.8583, "lines": ["line_1_purple"]},
+
+    {"id": "vanaz", "name": "Vanaz", "lat": 18.5075, "lon": 73.8058, "lines": ["line_2_aqua"]},
+    {"id": "anand_nagar", "name": "Anand Nagar", "lat": 18.5089, "lon": 73.8142, "lines": ["line_2_aqua"]},
+    {"id": "ideal_colony", "name": "Ideal Colony", "lat": 18.5117, "lon": 73.8219, "lines": ["line_2_aqua"]},
+    {"id": "nal_stop", "name": "Nal Stop", "lat": 18.5125, "lon": 73.8317, "lines": ["line_2_aqua"]},
+    {"id": "garware_college", "name": "Garware College", "lat": 18.5144, "lon": 73.8394, "lines": ["line_2_aqua"]},
+    {"id": "deccan_gymkhana", "name": "Deccan Gymkhana", "lat": 18.5175, "lon": 73.8450, "lines": ["line_2_aqua"]},
+    {"id": "chhatrapati_sambhaji_udyan", "name": "Chhatrapati Sambhaji Udyan", "lat": 18.5217, "lon": 73.8475, "lines": ["line_2_aqua"]},
+    {"id": "pmc", "name": "PMC", "lat": 18.5258, "lon": 73.8519, "lines": ["line_2_aqua"]},
+    {"id": "mangalwar_peth", "name": "Mangalwar Peth", "lat": 18.5272, "lon": 73.8647, "lines": ["line_2_aqua"]},
+    {"id": "pune_railway_station", "name": "Pune Railway Station Metro", "lat": 18.5283, "lon": 73.8739, "lines": ["line_2_aqua"]},
+    {"id": "ruby_hall_clinic", "name": "Ruby Hall Clinic", "lat": 18.5317, "lon": 73.8825, "lines": ["line_2_aqua"]},
+    {"id": "bund_garden", "name": "Bund Garden", "lat": 18.5369, "lon": 73.8886, "lines": ["line_2_aqua"]},
+    {"id": "kalyani_nagar", "name": "Kalyani Nagar", "lat": 18.5475, "lon": 73.9031, "lines": ["line_2_aqua"]},
+    {"id": "ramwadi", "name": "Ramwadi", "lat": 18.5528, "lon": 73.9144, "lines": ["line_2_aqua"]}
+  ],
+  "fare_rules": {
+    "min_fare": 10,
+    "slabs": [
+      {"max_stations": 3, "fare_inr": 10},
+      {"max_stations": 6, "fare_inr": 15},
+      {"max_stations": 9, "fare_inr": 20},
+      {"max_stations": 14, "fare_inr": 25},
+      {"max_stations": 18, "fare_inr": 30},
+      {"max_stations": 99, "fare_inr": 35}
+    ]
+  }
+}

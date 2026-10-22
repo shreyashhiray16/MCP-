@@ -1,0 +1,191 @@
+[
+  {
+    "id": "place_pcmc_metro",
+    "name": "PCMC",
+    "display_name": "PCMC Metro Station, Pimpri-Chinchwad, Pune",
+    "aliases": ["pcmc", "pcmc metro", "pcmc metro station", "pcmc bhavan"],
+    "area": "Pimpri-Chinchwad",
+    "lat": 18.6288,
+    "lon": 73.8188
+  },
+  {
+    "id": "place_pimpri",
+    "name": "Pimpri",
+    "display_name": "Pimpri, Pimpri-Chinchwad, Pune",
+    "aliases": ["pimpri", "pimpri gaon", "pimpri station", "pimpri railway station"],
+    "area": "Pimpri-Chinchwad",
+    "lat": 18.6277,
+    "lon": 73.8010
+  },
+  {
+    "id": "place_hinjewadi_p1",
+    "name": "Hinjewadi Phase 1",
+    "display_name": "Hinjewadi Phase 1, Rajiv Gandhi Infotech Park, Pune",
+    "aliases": ["hinjewadi phase 1", "hinjewadi p1", "hinjewadi", "hinjewadi shivaji chowk", "hinjawadi phase 1", "hinjawadi", "infosys phase 1"],
+    "area": "Hinjewadi IT Park",
+    "lat": 18.5912,
+    "lon": 73.7389
+  },
+  {
+    "id": "place_hinjewadi_p2",
+    "name": "Hinjewadi Phase 2",
+    "display_name": "Hinjewadi Phase 2, Wipro Circle, Pune",
+    "aliases": ["hinjewadi phase 2", "hinjewadi p2", "wipro circle", "hinjawadi phase 2"],
+    "area": "Hinjewadi IT Park",
+    "lat": 18.5982,
+    "lon": 73.7185
+  },
+  {
+    "id": "place_hinjewadi_p3",
+    "name": "Hinjewadi Phase 3",
+    "display_name": "Hinjewadi Phase 3, Megapolis Circle, Pune",
+    "aliases": ["hinjewadi phase 3", "hinjewadi p3", "megapolis", "hinjawadi phase 3", "tcs phase 3"],
+    "area": "Hinjewadi IT Park",
+    "lat": 18.5775,
+    "lon": 73.6892
+  },
+  {
+    "id": "place_shivajinagar",
+    "name": "Shivajinagar",
+    "display_name": "Shivajinagar, Pune",
+    "aliases": ["shivajinagar", "shivaji nagar", "shivajinagar bus stand", "shivajinagar station", "shimla office"],
+    "area": "Central Pune",
+    "lat": 18.5314,
+    "lon": 73.8446
+  },
+  {
+    "id": "place_swargate",
+    "name": "Swargate",
+    "display_name": "Swargate Bus Terminal, Pune",
+    "aliases": ["swargate", "swargate bus stand", "swargate chowk", "swargate depot"],
+    "area": "South Pune",
+    "lat": 18.5018,
+    "lon": 73.8580
+  },
+  {
+    "id": "place_deccan",
+    "name": "Deccan Gymkhana",
+    "display_name": "Deccan Gymkhana, Pune",
+    "aliases": ["deccan", "deccan gymkhana", "fc road", "jm road", "goodluck chowk"],
+    "area": "Central Pune",
+    "lat": 18.5167,
+    "lon": 73.8415
+  },
+  {
+    "id": "place_katraj",
+    "name": "Katraj",
+    "display_name": "Katraj Bus Depot, Pune",
+    "aliases": ["katraj", "katraj bus stand", "katraj depot", "katraj chowk", "katraj snake park", "bharati vidyapeeth"],
+    "area": "South Pune",
+    "lat": 18.4575,
+    "lon": 73.8677
+  },
+  {
+    "id": "place_kothrud",
+    "name": "Kothrud",
+    "display_name": "Kothrud, Pune",
+    "aliases": ["kothrud", "kothrud stand", "kothrud depot", "karve road", "chandani chowk", "paud road"],
+    "area": "West Pune",
+    "lat": 18.5074,
+    "lon": 73.8077
+  },
+  {
+    "id": "place_pune_station",
+    "name": "Pune Railway Station",
+    "display_name": "Pune Junction Railway Station, Pune",
+    "aliases": ["pune railway station", "pune station", "pune junction", "station"],
+    "area": "Central Pune",
+    "lat": 18.5289,
+    "lon": 73.8744
+  },
+  {
+    "id": "place_dypatil_pimpri",
+    "name": "DY Patil Pimpri",
+    "display_name": "Dr. D. Y. Patil Institute of Technology, Pimpri, Pune",
+    "aliases": ["dy patil pimpri", "d.y. patil pimpri", "dypit", "dy patil college pimpri", "dy patil institute of technology pimpri"],
+    "area": "Pimpri-Chinchwad",
+    "lat": 18.6248,
+    "lon": 73.8185
+  },
+  {
+    "id": "place_coep",
+    "name": "COEP Technological University",
+    "display_name": "COEP Technological University, Shivajinagar, Pune",
+    "aliases": ["coep", "coep pune", "college of engineering pune", "coep technological university"],
+    "area": "Shivajinagar",
+    "lat": 18.5293,
+    "lon": 73.8565
+  },
+  {
+    "id": "place_baner",
+    "name": "Baner",
+    "display_name": "Baner, Pune",
+    "aliases": ["baner", "baner phata", "baner road", "balewadi high street"],
+    "area": "North-West Pune",
+    "lat": 18.5590,
+    "lon": 73.7868
+  },
+  {
+    "id": "place_aundh",
+    "name": "Aundh",
+    "display_name": "Aundh, Pune",
+    "aliases": ["aundh", "parihar chowk", "bremen chowk"],
+    "area": "North-West Pune",
+    "lat": 18.5602,
+    "lon": 73.8071
+  },
+  {
+    "id": "place_hadapsar",
+    "name": "Hadapsar",
+    "display_name": "Hadapsar Gadital, Pune",
+    "aliases": ["hadapsar", "gadital", "hadapsar gadital", "hadapsar depot"],
+    "area": "East Pune",
+    "lat": 18.5020,
+    "lon": 73.9298
+  },
+  {
+    "id": "place_viman_nagar",
+    "name": "Viman Nagar",
+    "display_name": "Viman Nagar, Pune",
+    "aliases": ["viman nagar", "phoenix marketcity", "symbiosis viman nagar"],
+    "area": "North-East Pune",
+    "lat": 18.5679,
+    "lon": 73.9143
+  },
+  {
+    "id": "place_magarpatta",
+    "name": "Magarpatta City",
+    "display_name": "Magarpatta City Cybercity, Hadapsar, Pune",
+    "aliases": ["magarpatta", "magarpatta city", "cybercity magarpatta"],
+    "area": "East Pune",
+    "lat": 18.5158,
+    "lon": 73.9272
+  },
+  {
+    "id": "place_wakad",
+    "name": "Wakad",
+    "display_name": "Wakad Bridge / Chowk, Pune",
+    "aliases": ["wakad", "wakad chowk", "wakad bridge", "dange chowk"],
+    "area": "North-West Pune",
+    "lat": 18.5987,
+    "lon": 73.7634
+  },
+  {
+    "id": "place_bhosari",
+    "name": "Bhosari",
+    "display_name": "Bhosari, Pimpri-Chinchwad, Pune",
+    "aliases": ["bhosari", "bhosari midc", "nashik phata"],
+    "area": "Pimpri-Chinchwad",
+    "lat": 18.6253,
+    "lon": 73.8441
+  },
+  {
+    "id": "place_airport",
+    "name": "Pune Airport",
+    "display_name": "Pune International Airport, Lohegaon, Pune",
+    "aliases": ["pune airport", "lohegaon airport", "airport pune"],
+    "area": "Lohegaon",
+    "lat": 18.5822,
+    "lon": 73.9197
+  }
+]

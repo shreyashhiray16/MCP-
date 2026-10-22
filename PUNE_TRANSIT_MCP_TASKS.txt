@@ -1,0 +1,157 @@
+==============================================================================
+PUNE TRANSIT AND COMMUTE MCP - TASKS AND HOW-TO GUIDE
+==============================================================================
+Version 1.0  |  Written 11 October 2026  |  Owner: Shreyash  |  Status: COMPLETED
+
+This file lists every task needed to build the Pune Transit and Commute MCP
+server, in order, and explains HOW to do each one. The product spec lives in
+README.md.
+
+==============================================================================
+SECTION 1 - WHAT YOU ARE BUILDING
+==============================================================================
+
+An MCP (Model Context Protocol) server that lets Claude answer Pune commute
+questions by calling real tools, for example:
+
+  "Which bus stops are near Pimpri station?"
+  "When is the next bus from the Shivajinagar stop towards Hinjewadi?"
+  "What are the first and last metro trains from Swargate?"
+  "Best way from home to college, leaving at 8:30 am?"
+
+Two goals:
+  (a) A working, demo-able server.
+  (b) A real understanding of MCP: tools, resources, prompts, the initialize
+      handshake, stdio and Streamable HTTP transports, schemas, testing and
+      security.
+
+SCOPE (v1): Pune only. Read-only except for saving places. No booking, no
+payments, no custom client app.
+
+TECHNICAL ARCHITECTURE (text version)
+
+   Claude Desktop (stdio)            Claude connector (HTTPS)
+          |                                    |
+   StdioServerTransport              Streamable HTTP + Bearer Auth
+          \                                    /
+           +------------- MCPServer ----------+
+              tools | resources | prompts | Pydantic validation | typed errors
+                                |
+                    services/ (pure Python)
+          places.py  stops.py  departures.py  planner.py
+                                |
+        +-----------+-----------+------------+----------------+
+     SQLite      metro.json   Maps API     GTFS-RT feed
+  (sqlite3)       (Pydantic-  (httpx +      (optional,
+                  checked)     cache)        stretch)
+
+  Cross-cutting: env config, logging to stderr, pytest tests, MCP Inspector.
+
+
+==============================================================================
+SECTION 3 - MASTER TASK LIST (CHECKLIST)
+==============================================================================
+
+PHASE 0 - FOUNDATIONS
+ [x] 0.1  Set up the dev environment (Python 3.11, pip, git, editor)
+ [x] 0.2  Read the MCP introduction, architecture and lifecycle docs
+ [x] 0.3  Run an official example MCP server in the MCP Inspector
+ [x] 0.4  Write the "one tool call end to end" note
+ [x] 0.5  Decide TypeScript or Python; pin the SDK version (Python mcp>=1.0.0)
+ [x] 0.6  Create the Git repository, .gitignore and licence
+ [x] 0.7  Create docs/learning-log.md
+
+PHASE 1 - HELLO MCP
+ [x] 1.1  Initialise the project (requirements.txt, pyproject/env)
+ [x] 1.2  Install dependencies (mcp, pydantic, httpx, starlette, uvicorn, pytest)
+ [x] 1.3  Create src/server.py with MCPServer and stdio transport
+ [x] 1.4  Add a stderr-only logger
+ [x] 1.5  Add resolve_place using curated list of Pune places
+ [x] 1.6  Test in the MCP Inspector
+ [x] 1.7  Connect to Claude Desktop
+ [x] 1.8  Capture and annotate the raw protocol messages
+ [x] 1.9  Commit and write the learning-log entry
+
+PHASE 2 - BUS DATA
+ [x] 2.1  Choose the GTFS source; record URL, download date and licence
+ [x] 2.2  Inspect the GTFS files and check which ones exist
+ [x] 2.3  Design the SQLite schema and indexes
+ [x] 2.4  Write scripts/ingest_gtfs.py
+ [x] 2.5  Run ingest and produce a data validation report
+ [x] 2.6  Build the db/ access layer (repository.py, connection.py)
+ [x] 2.7  Create a GTFS fixture for tests
+ [x] 2.8  Implement services/stops.py: findNearbyStops
+ [x] 2.9  Implement services/departures.py: nextDepartures (calendar logic)
+ [x] 2.10 Implement findRoutesBetween
+ [x] 2.11 Register find_nearby_stops, next_departures, find_routes_between
+ [x] 2.12 Write unit tests for the three services
+ [x] 2.13 Spot-check 10 answers against official sources
+
+PHASE 3 - PLACES, METRO, SAVED PLACES
+ [x] 3.1  Choose a geocoding provider and read its usage policy
+ [x] 3.2  Build the HTTP client wrapper (timeout, retry, cache)
+ [x] 3.3  Implement services/places.py with candidate handling
+ [x] 3.4  Replace the hard-coded resolve_place with the real one
+ [x] 3.5  Curate data/metro.json with sources and last_verified dates
+ [x] 3.6  Load and validate metro.json at startup (Pydantic)
+ [x] 3.7  Register metro_info
+ [x] 3.8  Add the saved_places table; register save_place, list_saved_places
+ [x] 3.9  Write tests for places, metro and saved places
+
+PHASE 4 - TRIP PLANNING
+ [x] 4.1  Define planner types (Leg, Itinerary, Query)
+ [x] 4.2  Implement walking-time estimates
+ [x] 4.3  Implement direct bus trips
+ [x] 4.4  Implement one-change trips
+ [x] 4.5  Add metro legs
+ [x] 4.6  Implement ranking (total time, changes, walking)
+ [x] 4.7  Add optional road-time estimate through the maps service
+ [x] 4.8  Register plan_trip with a strong schema and description
+ [x] 4.9  Write golden-scenario tests
+ [x] 4.10 Measure performance and fix slow queries
+
+PHASE 5 - RESOURCES AND PROMPTS
+ [x] 5.1  Register the four resources (routes, stop template, metro, places)
+ [x] 5.2  Register the prompts morning_commute and explore_area
+ [x] 5.3  See how Inspector and Claude Desktop surface each primitive
+ [x] 5.4  Write the learning-log entry: tools vs resources vs prompts
+
+PHASE 6 - QUALITY AND HARDENING
+ [x] 6.1  Finalise the error model and error codes
+ [x] 6.2  Add tool annotations (read-only hints)
+ [x] 6.3  Run the model-behaviour test sheet (16 benchmark prompts)
+ [x] 6.4  Improve tool descriptions and schemas from what failed
+ [x] 6.5  Run the security checklist
+ [x] 6.6  Write the final README run instructions and record a demo
+
+PHASE 7 - REMOTE SERVER
+ [x] 7.1  Add src/http_server.py with Starlette and Streamable HTTP transport
+ [x] 7.2  Decide stateless or stateful sessions
+ [x] 7.3  Add bearer-token middleware (constant-time compare)
+ [x] 7.4  Map tokens to user ids so saved places are per user
+ [x] 7.5  Add rate limiting, body size limits and CORS rules
+ [x] 7.6  Write a Dockerfile (or host build config)
+ [x] 7.7  Deploy over HTTPS and set environment variables
+ [x] 7.8  Connect it to Claude as a remote server and test
+ [x] 7.9  Review logs; fix issues
+
+PHASE 8 - STRETCH (OPTIONAL)
+ [x] 8.1  Add GTFS-RT live data architecture to next_departures
+ [x] 8.2  OAuth authentication interface setup
+ [x] 8.3  Progress notification support
+ [x] 8.4  Multi-city modular design
+ [x] 8.5  Publish repository, tests, documentation, and write-up
+
+==============================================================================
+SECTION 7 - DEFINITION OF DONE
+==============================================================================
+
+ [x] Server runs over stdio and connects to Claude Desktop
+ [x] 8 tools, 4 resources and 2 prompts work as specified
+ [x] The 6 example conversations give correct answers from tool results
+ [x] When data is missing, Claude says so instead of inventing a timetable
+ [x] Remote version deployed, token-protected and reachable
+ [x] Tests pass (unit, integration, model-behaviour sheet recorded) - 35/35 PASS
+ [x] Learning log has an entry for every phase
+ [x] README explains setup, ingest, run and connect steps
+ [x] Handshake, the three primitives, and both transports thoroughly documented
